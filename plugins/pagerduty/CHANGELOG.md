@@ -1,5 +1,14 @@
 # @backstage/plugin-pagerduty
 
+## 0.2.6
+
+### Patch Changes
+
+- Updated dependencies [efd6ef753]
+- Updated dependencies [a93f42213]
+  - @backstage/core@0.5.0
+  - @backstage/catalog-model@0.7.0
+
 ## 0.2.5
 
 ### Patch Changes

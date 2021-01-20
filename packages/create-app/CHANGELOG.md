@@ -1,5 +1,127 @@
 # @backstage/create-app
 
+## 0.3.6
+
+### Patch Changes
+
+- 89278acab: Migrate to using `FlatRoutes` from `@backstage/core` for the root app routes.
+
+  This is the first step in migrating applications as mentioned here: https://backstage.io/docs/plugins/composability#porting-existing-apps.
+
+  To apply this change to an existing app, switch out the `Routes` component from `react-router` to `FlatRoutes` from `@backstage/core`.
+  This also allows you to remove any `/*` suffixes on the route paths. For example:
+
+  ```diff
+  import {
+     OAuthRequestDialog,
+     SidebarPage,
+     createRouteRef,
+  +  FlatRoutes,
+   } from '@backstage/core';
+   import { AppSidebar } from './sidebar';
+  -import { Route, Routes, Navigate } from 'react-router';
+  +import { Route, Navigate } from 'react-router';
+   import { Router as CatalogRouter } from '@backstage/plugin-catalog';
+  ...
+           <AppSidebar />
+  -        <Routes>
+  +        <FlatRoutes>
+  ...
+             <Route
+  -            path="/catalog/*"
+  +            path="/catalog"
+               element={<CatalogRouter EntityPage={EntityPage} />}
+             />
+  -          <Route path="/docs/*" element={<DocsRouter />} />
+  +          <Route path="/docs" element={<DocsRouter />} />
+  ...
+             <Route path="/settings" element={<SettingsRouter />} />
+  -        </Routes>
+  +        </FlatRoutes>
+         </SidebarPage>
+  ```
+
+- 26d3b24f3: fix routing and config for user-settings plugin
+
+  To make the corresponding change in your local app, add the following in your App.tsx
+
+  ```
+  import { Router as SettingsRouter } from '@backstage/plugin-user-settings';
+  ...
+  <Route path="/settings" element={<SettingsRouter />} />
+  ```
+
+  and the following to your plugins.ts:
+
+  ```
+  export { plugin as UserSettings } from '@backstage/plugin-user-settings';
+  ```
+
+- 92dbbcedd: Add `*-credentials.yaml` to gitignore to prevent accidental commits of sensitive credential information.
+
+  To apply this change to an existing installation, add these lines to your `.gitignore`
+
+  ```gitignore
+  # Sensitive credentials
+  *-credentials.yaml
+  ```
+
+- d176671d1: use `fromConfig` for all scaffolder helpers, and use the url protocol for app-config location entries.
+
+  To apply this change to your local installation, replace the contents of your `packages/backend/src/plugins/scaffolder.ts` with the following contents:
+
+  ```ts
+  import {
+    CookieCutter,
+    createRouter,
+    Preparers,
+    Publishers,
+    CreateReactAppTemplater,
+    Templaters,
+    CatalogEntityClient,
+  } from '@backstage/plugin-scaffolder-backend';
+  import { SingleHostDiscovery } from '@backstage/backend-common';
+  import type { PluginEnvironment } from '../types';
+  import Docker from 'dockerode';
+
+  export default async function createPlugin({
+    logger,
+    config,
+  }: PluginEnvironment) {
+    const cookiecutterTemplater = new CookieCutter();
+    const craTemplater = new CreateReactAppTemplater();
+    const templaters = new Templaters();
+    templaters.register('cookiecutter', cookiecutterTemplater);
+    templaters.register('cra', craTemplater);
+
+    const preparers = await Preparers.fromConfig(config, { logger });
+    const publishers = await Publishers.fromConfig(config, { logger });
+
+    const dockerClient = new Docker();
+
+    const discovery = SingleHostDiscovery.fromConfig(config);
+    const entityClient = new CatalogEntityClient({ discovery });
+
+    return await createRouter({
+      preparers,
+      templaters,
+      publishers,
+      logger,
+      config,
+      dockerClient,
+      entityClient,
+    });
+  }
+  ```
+
+  This will ensure that the `scaffolder-backend` package can add handlers for the `url` protocol which is becoming the standard when registering entities in the `catalog`
+
+- db05f7a35: Remove the `@types/helmet` dev dependency from the app template. This
+  dependency is now unused as the package `helmet` brings its own types.
+
+  To update your existing app, simply remove the `@types/helmet` dependency from
+  the `package.json` of your backend package.
+
 ## 0.3.5
 
 ### Patch Changes

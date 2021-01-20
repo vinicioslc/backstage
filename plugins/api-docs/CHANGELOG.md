@@ -1,5 +1,17 @@
 # @backstage/plugin-api-docs
 
+## 0.4.3
+
+### Patch Changes
+
+- Updated dependencies [efd6ef753]
+- Updated dependencies [33846acfc]
+- Updated dependencies [f04db53d7]
+- Updated dependencies [a93f42213]
+  - @backstage/core@0.5.0
+  - @backstage/plugin-catalog@0.2.12
+  - @backstage/catalog-model@0.7.0
+
 ## 0.4.2
 
 ### Patch Changes

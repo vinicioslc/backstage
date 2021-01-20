@@ -1,5 +1,23 @@
 # @backstage/plugin-github-actions
 
+## 0.3.0
+
+### Minor Changes
+
+- 46bba09ea: Support GHE
+
+### Patch Changes
+
+- Updated dependencies [efd6ef753]
+- Updated dependencies [0b135e7e0]
+- Updated dependencies [33846acfc]
+- Updated dependencies [f04db53d7]
+- Updated dependencies [a93f42213]
+  - @backstage/core@0.5.0
+  - @backstage/integration@0.2.1
+  - @backstage/plugin-catalog@0.2.12
+  - @backstage/catalog-model@0.7.0
+
 ## 0.2.7
 
 ### Patch Changes
